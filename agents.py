@@ -30,7 +30,6 @@ GROUNDING = (
 PROMPTS = {
     "candidate": (
         "You are an expert HR analyst. Analyze the CV and extract the requested data precisely. "
-        "Copy the candidate's full name exactly as written in the CV, word for word and in the same order. "
         "extracted_skills must contain only skills explicitly written in the CV. Compute years of experience from "
         "actual employment dates written in the CV, excluding years of study; if no dates are given, use 0. "
         "The summary must only restate what the CV says. {lang_rule}",

@@ -44,22 +44,6 @@ def _is_arabic(text: str) -> bool:
     return bool(letters) and len(_AR_CHARS.findall(text)) / len(letters) > 0.3
 
 
-def _name_as_written(name: str, cv_text: str) -> str:
-    """إذا كانت كلمات الاسم موجودة في سطر واحد من السيرة بترتيب مختلف، نأخذه بالترتيب المكتوب في السيرة
-    (النموذج أحياناً يبدّل ترتيب الأسماء العربية: سلامه لمياء ← لمياء سلامه)."""
-    words = [_norm(w).strip() for w in name.split() if _norm(w).strip()]
-    if len(words) < 2:
-        return name
-    target = sorted(words)
-    for line in cv_text.splitlines():
-        tokens = line.split()
-        norm_tokens = [_norm(t).strip() for t in tokens]
-        for i in range(len(tokens) - len(words) + 1):
-            if sorted(norm_tokens[i:i + len(words)]) == target:
-                return " ".join(re.sub(r"[^\w\-']", "", t) or t for t in tokens[i:i + len(words)])
-    return name
-
-
 def ground_results(cv_text: str, candidate: CandidateInfo, gap: SkillGap, improved: ImprovedCV) -> List[str]:
     """يعدّل المخرجات في مكانها ويعيد قائمة بما حُذف (للمراجعة).
     نتحقق فقط مما كُتب بنفس لغة السيرة، أو بالإنجليزية (المصطلحات التقنية دائماً إنجليزية)؛
@@ -75,8 +59,6 @@ def ground_results(cv_text: str, candidate: CandidateInfo, gap: SkillGap, improv
     removed += [s for s in candidate.extracted_skills if s not in kept]
     candidate.extracted_skills = kept
 
-    if candidate.name.strip().upper() != "N/A":
-        candidate.name = _name_as_written(candidate.name, cv_text)
     if candidate.name.strip().upper() != "N/A" and checkable(candidate.name) and not _in_text(candidate.name, norm_cv):
         removed.append(candidate.name)
         candidate.name = "N/A"

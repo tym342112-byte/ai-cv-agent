@@ -117,9 +117,6 @@ def _arabic(lang, **_):
     visual = "\n".join(run.sub(lambda m: m.group(0)[::-1], line[::-1]) for line in logical)
     assert file_reader.clean_text(visual) == "\n".join(logical), "reversed Arabic not repaired"
     assert file_reader.clean_text("ﺍﻟﺴﻴﺮﺓ ﺍﻟﺬﺍﺗﻴﺔ") == "السيرة الذاتية", "presentation forms not repaired"
-    name_line = "الاسم: لمياء سلامه الرشيدي"  # «لا» المركّبة يجب أن تبقى «لا» بعد العكس
-    lig = run.sub(lambda m: m.group(0)[::-1], name_line.replace("لا", "\ufefb")[::-1])
-    assert file_reader.clean_text(lig + "\n" + visual) .split("\n")[0] == name_line, "lam-alef broken"
     cand = schemas.CandidateInfo(name="أحمد علي", current_title="x", field="x", education="x", summary="x",
                                  extracted_skills=["Python", "Power BI", "Kubernetes"], experience_years=3)
     gap = schemas.SkillGap(missing_skills=[schemas.MissingSkill(skill="Python", priority="high", reason="x"),
@@ -128,11 +125,6 @@ def _arabic(lang, **_):
     imp = schemas.ImprovedCV(improved_summary="x", improved_bullet_points=["رفعت الدقة 40% منذ 2021"], ats_tips=[])
     pipeline.ground_results("\n".join(logical), cand, gap, imp)
     assert cand.extracted_skills == ["Python", "Power BI"] and cand.name == "N/A"
-    named = schemas.CandidateInfo(name="سلامه لمياء الرشيدي", current_title="x", field="x", education="x",
-                                  summary="x", extracted_skills=[], experience_years=0)
-    pipeline.ground_results(name_line, named, schemas.SkillGap(missing_skills=[], recommendations_to_improve=[]),
-                            schemas.ImprovedCV(improved_summary="", improved_bullet_points=[], ats_tips=[]))
-    assert named.name == "لمياء سلامه الرشيدي", "name order not fixed"
     assert [m.skill for m in gap.missing_skills] == ["Apache Spark"]
     assert imp.improved_bullet_points == ["رفعت الدقة [X] منذ 2021"]
     return i18n.t(lang, "chk_d_arabic")

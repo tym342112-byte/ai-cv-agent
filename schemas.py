@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class CandidateInfo(BaseModel):
-    name: str = Field(description="Candidate's full name copied exactly as written in the CV (same words, same order), or 'N/A'")
+    name: str = Field(description="Candidate's name as written in the CV, or 'N/A'")
     current_title: str = Field(description="Current or closest job title, in the output language")
     field: str = Field(description="General professional field, e.g. data analysis, accounting, nursing")
     education: str = Field(description="Highest degree and major, or 'N/A'")
