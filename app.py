@@ -424,10 +424,9 @@ def analysis_page():
     html_block('<div id="start"></div>')
     with st.container(key="panel"):
         html_block(title_row(T("panel_title"), "upload"))
-        api_key = env_key
+        api_key = env_key  # المفتاح من Secrets فقط، ولا توجد خانة له في الواجهة
         if not api_key:
-            field_label(T("api_key_label"))
-            api_key = st.text_input("api_key", type="password", key="api_key", label_visibility="collapsed")
+            html_block(f'<div class="cv-info">{icon("info")}<span>{esc(T("no_key"))}</span></div>')
         model = DEFAULT_MODEL  # النموذج ثابت (يتغير فقط من Colab Secrets عبر OPENAI_MODEL) ولا يظهر للمستخدم
         c_up, c_city, c_btn = st.columns([3, 1.4, 1.1], vertical_alignment="bottom")
         # تسميات ثابتة للعناصر (label_visibility) حتى لا تُمسح قيمها عند تبديل اللغة
@@ -560,7 +559,7 @@ def show_results(r):
 # ================= صفحة فحص النظام =================
 def check_page():
     model = DEFAULT_MODEL
-    api_key = env_key or st.session_state.get("api_key", "")
+    api_key = env_key
     with st.container(key="chk_header"):
         c_title, c_btn = st.columns([4, 1], vertical_alignment="center")
         with c_title:

@@ -69,6 +69,7 @@ TEXT: Dict[str, Dict[str, object]] = {
         "chk_d_arabic": "النص العربي المعكوس والحروف المتصلة تُصحَّح، والمهارات غير الموجودة في السيرة تُحذف",
         "chk_d_openai_skip": "لا يوجد مفتاح OpenAI — تم التخطي",
         "api_key_label": "مفتاح OpenAI (لا يُحفظ)",
+        "no_key": "الخدمة غير مهيأة بعد: يجب إضافة مفتاح OPENAI_API_KEY في إعدادات التطبيق (Secrets).",
         # الشريط الجانبي
         "page_title": "وكيل السيرة الذاتية",
         "brand_sub": "وكيل السيرة الذاتية الذكي",
@@ -185,6 +186,7 @@ TEXT: Dict[str, Dict[str, object]] = {
         "chk_d_arabic": "Reversed Arabic and presentation-form letters are repaired; skills not in the CV are removed",
         "chk_d_openai_skip": "No OpenAI key — skipped",
         "api_key_label": "OpenAI key (never stored)",
+        "no_key": "The service isn't configured yet: add OPENAI_API_KEY in the app settings (Secrets).",
         "brand_sub": "Smart CV Agent",
         "language": "Language",
         "settings": "Settings",
