@@ -32,6 +32,7 @@ _INVISIBLE = re.compile("[\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff\u00ad]")
 _TASHKEEL = re.compile("[\u064b-\u065f\u0670\u06d6-\u06ed]")
 _LATIN_RUN = re.compile(r"[A-Za-z0-9@._+\-/:#%&()]+(?: +[A-Za-z0-9@._+\-/:#%&()]+)*")
 _AR_WORD = re.compile(f"[{_AR}]{{2,}}")
+_AR_ANY = re.compile("[\u0600-\u06FF\ufb50-\ufdff\ufe70-\ufeff]")
 _AR_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
 
 
@@ -51,19 +52,20 @@ def _is_reversed_arabic(text: str) -> bool:
 
 def _reverse_line(line: str) -> str:
     """يعكس السطر العربي ثم يعيد الكلمات الإنجليزية والأرقام لاتجاهها الصحيح."""
-    if not re.search(f"[{_AR}]", line):
+    if not _AR_ANY.search(line):
         return line
     return _LATIN_RUN.sub(lambda m: m.group(0)[::-1], line[::-1])
 
 
 def normalize_arabic(text: str) -> str:
-    text = _fix_presentation_forms(text)
     text = _INVISIBLE.sub("", text)
-    text = _TASHKEEL.sub("", text).replace("ـ", "")   # التشكيل والتطويل
-    text = text.translate(_AR_DIGITS)                     # ٢٠٢٤ → 2024 حتى يطابق النموذج الأرقام
-    if _is_reversed_arabic(text):
+    # الكشف عن النص المعكوس يتم على نسخة مفكوكة الحروف، لكن العكس نفسه يتم قبل فك الحروف المتصلة:
+    # حرف «لا» المركّب (ﻻ) رمز واحد، لو فككناه قبل العكس لصار «ال» (سلامه ← سالمه).
+    if _is_reversed_arabic(_fix_presentation_forms(text)):
         text = "\n".join(_reverse_line(line) for line in text.split("\n"))
-    return text
+    text = _fix_presentation_forms(text)
+    text = _TASHKEEL.sub("", text).replace("ـ", "")   # التشكيل والتطويل
+    return text.translate(_AR_DIGITS)                     # ٢٠٢٤ → 2024 حتى يطابق النموذج الأرقام
 
 
 def clean_text(text: str) -> str:
